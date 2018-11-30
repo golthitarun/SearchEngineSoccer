@@ -32,7 +32,7 @@ public class IndexCreator {
 
     public static Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_42);
     private IndexWriter writer;
-    public static String indexLocation = "/Users/sobellan/Desktop/luceneIndex/index_snow.fl";
+    public static String indexLocation = "/Users/tharunngolthi/Downloads/luceneIndex/index_snow.fl";
     String docLocation = "/Users/vivek/Desktop/data1/";
     String urlLocation = "/Users/vivek/Desktop/urls1.txt/";
     public HashMap<String, String> urlMap = new HashMap<>();
