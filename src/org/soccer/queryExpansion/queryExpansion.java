@@ -37,16 +37,20 @@ public class queryExpansion {
         Collections.sort(list, new Comparator<wordObj>() {
             @Override
             public int compare(final wordObj o1, final wordObj o2) {
-                return o1.val >= o2.val ? 1 : -1;
+                return o2.val <= o1.val ? -1 : 1;
             }
         });
 
-        LinkedHashSet<String> set = new LinkedHashSet<>();
+        LinkedHashSet<String> wordSet = new LinkedHashSet<>();
         for(int i = list.size() - 1; i > 0; i--){
-            set.add(list.get(i).v);
+            wordSet.add(list.get(i).v);
         }
+        StringBuilder st = new StringBuilder();
+        st.append(query);
+        st.append(" ");
+        st.append(String.join(" ", wordSet));
 
-        return query+" "+String.join(" ", set);
+        return st.toString();
 
     }
 
@@ -113,6 +117,7 @@ public class queryExpansion {
             }
         }
 
+        // Normalization
         wordObj[][] normalized = new wordObj[n][n];
 
         for (int i = 0; i < stems.length; i++){
@@ -141,12 +146,12 @@ public class queryExpansion {
         wordObj[][] elements = new wordObj[strs.size()][3];
 
         int idx = 0;
-        PriorityQueue<wordObj> queue;
+        PriorityQueue<wordObj> priorityQueue;
         for(String word: strs) {
-             queue = new PriorityQueue<>(3, new Comparator<wordObj>() {
+             priorityQueue = new PriorityQueue<>(3, new Comparator<wordObj>() {
                 @Override
                 public int compare(final wordObj o1, final wordObj o2) {
-                    return o1.val >= o2.val ? 1 : -1;
+                    return o2.val <= o1.val ? -1 : 1;
                 }
             });
 
@@ -162,22 +167,28 @@ public class queryExpansion {
                 continue;
             }
             for (int j = 0; j < metricMatrix[i].length; j++) {
-                if (metricMatrix[i][j] == null || strs.contains(metricMatrix[i][j].u) && !metricMatrix[i][j].u.equals(word) || strs.contains(metricMatrix[i][j].v) && !metricMatrix[i][j].v.equals(word)) {
+                if(metricMatrix[i][j] == null){
+                    continue;
+                }
+                if (strs.contains(metricMatrix[i][j].u) && !metricMatrix[i][j].u.equals(word)) {
+                    continue;
+                }
+                if(strs.contains(metricMatrix[i][j].v) && !metricMatrix[i][j].v.equals(word)) {
                     continue;
                 }
 
                 if (tokenMap.containsKey(metricMatrix[i][j].v)) {
-                    queue.add(metricMatrix[i][j]);
+                    priorityQueue.add(metricMatrix[i][j]);
                 } else {
-                    queue.add(new wordObj(metricMatrix[i][j].u, stemMap.get(metricMatrix[i][j].v).iterator().next(), metricMatrix[i][j].val));
+                    priorityQueue.add(new wordObj(metricMatrix[i][j].u, stemMap.get(metricMatrix[i][j].v).iterator().next(), metricMatrix[i][j].val));
                 }
 
-                if (queue.size() >= 4){
-                    queue.poll();
+                if (priorityQueue.size() >= 4){
+                    priorityQueue.poll();
                 }
             }
 
-            elements[idx++] = queue.toArray(new wordObj[3]);
+            elements[idx++] = priorityQueue.toArray(new wordObj[3]);
         }
 
         return elements;

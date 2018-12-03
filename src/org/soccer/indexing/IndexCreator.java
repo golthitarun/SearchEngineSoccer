@@ -28,7 +28,7 @@ public class IndexCreator {
 
     public static Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_42);
     private IndexWriter writer;
-    public static String indexLocation = "/Users/sobellan/Desktop/luceneIndex/index_snow.fl";
+    public static String indexLocation = "/Users/tharunngolthi/Downloads/luceneIndex/index_snow.fl";
     public String docLocation = "/Users/vivek/Desktop/data/";
     public String urlLocation = "/Users/vivek/Desktop/urls.txt/";
     
